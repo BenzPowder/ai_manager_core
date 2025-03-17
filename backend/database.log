@@ -1,0 +1,40 @@
+2025-03-10 23:00:25,074 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:00:25,079 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:00:25,351 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:00:25,354 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:00:55,425 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\routes\\agents.py', reloading
+2025-03-10 23:00:55,674 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\routes\\agents.py', reloading
+2025-03-10 23:00:59,020 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:00:59,025 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:00:59,214 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:00:59,218 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:01:31,560 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\routes\\webhooks.py', reloading
+2025-03-10 23:01:32,390 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\routes\\webhooks.py', reloading
+2025-03-10 23:01:35,081 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:01:35,084 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:01:35,948 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:01:35,954 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:02:21,061 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:21] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-03-10 23:02:22,620 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:22] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-03-10 23:02:22,684 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:22] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-03-10 23:02:28,617 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:28] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=8ypAXrDJcMNQwAWTtVOs HTTP/1.1" 200 -
+2025-03-10 23:02:28,638 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:28] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-03-10 23:02:29,065 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-10 23:02:29,069 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-10 23:02:29,099 - werkzeug - INFO -  * Restarting with stat
+2025-03-10 23:02:29,725 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:02:29] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-03-10 23:03:14,664 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-10 23:03:14,667 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-10 23:03:14,681 - werkzeug - INFO -  * Restarting with stat
+2025-03-10 23:03:19,663 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:03:19] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-03-10 23:03:20,123 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:03:20] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-03-10 23:03:20,159 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:03:20] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-03-10 23:03:26,008 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:03:26] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png&s=8ypAXrDJcMNQwAWTtVOs HTTP/1.1[0m" 304 -
+2025-03-10 23:03:26,025 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2025 23:03:26] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-03-10 23:03:56,536 - werkzeug - WARNING -  * Debugger is active!
+2025-03-10 23:03:56,571 - werkzeug - INFO -  * Debugger PIN: 455-169-015
+2025-03-10 23:04:29,967 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\database\\db_connection.py', reloading
+2025-03-10 23:04:30,618 - werkzeug - INFO -  * Detected change in 'C:\\Users\\DB-SW-SOMBENZ\\Desktop\\Project\\Python Support\\AI\\ai_manager_core\\backend\\app\\database\\db_connection.py', reloading
+2025-03-10 23:04:31,779 - werkzeug - INFO -  * Restarting with stat

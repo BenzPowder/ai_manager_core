@@ -1,0 +1,25 @@
+<table class="w-full border-collapse bg-white shadow-md rounded-lg">
+    <thead class="bg-gray-200">
+        <tr>
+            <th class="p-3 text-left">Agency</th>
+            <th class="p-3 text-left">Webhook URL</th>
+            <th class="p-3 text-left">Sub-Agent</th>
+            <th class="p-3 text-left">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for webhook in webhooks %}
+<tr class="border-b">
+    <td class="py-2 px-4">{{ webhook.agency_name }}</td>
+    <td class="py-2 px-4">{{ webhook.webhook_url }}</td>
+    <td class="py-2 px-4">{{ webhook.sub_agent or '-' }}</td>
+    <td class="py-2 px-4">
+        <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 transition">
+            ❌ ลบ
+        </button>
+    </td>
+</tr>
+{% endfor %}
+
+    </tbody>
+</table>

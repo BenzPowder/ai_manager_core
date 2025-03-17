@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Manager Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <h1 class="text-2xl font-bold text-gray-900">AI Manager</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Notification Area -->
+            <div id="notification" class="hidden fixed top-4 right-4 z-50"></div>
+
+            <!-- Agents Section -->
+            <div class="bg-white rounded-lg shadow mb-6">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-robot text-2xl text-blue-600 mr-3"></i>
+                            <h2 class="text-xl font-semibold text-gray-900">AI Agents</h2>
+                        </div>
+                        <div class="space-x-2">
+                            <a href="/test" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                                <i class="fas fa-vial mr-2"></i> ทดสอบ AI
+                            </a>
+                            <a href="/create_agent" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200">
+                                <i class="fas fa-plus mr-2"></i> สร้าง Agent
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สร้าง</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for agent in agents %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ agent.agent_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agent.agent_type }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agent.created_at }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                    <a href="/agents/edit/{{ agent.id }}" class="text-indigo-600 hover:text-indigo-900 transition-colors duration-150">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="text-red-600 hover:text-red-900 transition-colors duration-150 delete-agent" data-id="{{ agent.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Webhooks Section -->
+            <div class="bg-white rounded-lg shadow mb-6">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-link text-2xl text-indigo-600 mr-3"></i>
+                            <h2 class="text-xl font-semibold text-gray-900">Webhooks</h2>
+                        </div>
+                        <div class="space-x-2">
+                            <a href="/create_webhook" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200">
+                                <i class="fas fa-plus mr-2"></i> สร้าง Webhook
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อหน่วยงาน</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Webhook URL</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AI Agents</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สร้าง</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for webhook in webhooks %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ webhook.agency_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <span class="truncate max-w-xs">{{ webhook.webhook_url }}</span>
+                                        {% if webhook.is_active %}
+                                        <button class="ml-2 text-indigo-600 hover:text-indigo-900 transition-colors duration-150 copy-url" data-url="{{ webhook.webhook_url }}" title="คัดลอก URL">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        {% else %}
+                                        <button class="ml-2 text-gray-400 cursor-not-allowed" title="ไม่สามารถคัดลอก URL ได้เนื่องจาก Webhook ถูกปิดใช้งาน">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {% if webhook.agent_names %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            {{ webhook.agent_names|replace(',', ', ') }}
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            ไม่มี Agent
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button class="toggle-status focus:outline-none" data-id="{{ webhook.id }}" data-status="{{ webhook.is_active }}">
+                                        {% if webhook.is_active %}
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 transition-colors duration-150">
+                                                <i class="fas fa-check-circle mr-1"></i> เปิดใช้งาน
+                                            </span>
+                                        {% else %}
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 transition-colors duration-150">
+                                                <i class="fas fa-times-circle mr-1"></i> ปิดใช้งาน
+                                            </span>
+                                        {% endif %}
+                                    </button>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ webhook.created_at }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                    <a href="/edit_webhook/{{ webhook.id }}" class="text-indigo-600 hover:text-indigo-900 transition-colors duration-150" title="แก้ไข">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="text-red-600 hover:text-red-900 transition-colors duration-150 delete-webhook" data-id="{{ webhook.id }}" title="ลบ">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- คู่มือการใช้งาน -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-book text-2xl text-purple-600 mr-3"></i>
+                        <h2 class="text-xl font-semibold text-gray-900">คู่มือการใช้งาน</h2>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="p-6 bg-blue-50 rounded-lg border border-blue-100 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-link text-blue-600 text-xl mr-2"></i>
+                                <h3 class="font-medium text-blue-900">การสร้าง Webhook</h3>
+                            </div>
+                            <ol class="list-decimal list-inside text-blue-800 space-y-3">
+                                <li class="flex items-start">
+                                    <span class="ml-2">คลิกปุ่ม "สร้าง Webhook"</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">กรอกชื่อหน่วยงาน</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">ใส่ Line Access Token</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">เลือก Agent ที่ต้องการใช้งาน</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">คัดลอก Webhook URL ไปใช้ในการตั้งค่า Line Messaging API</span>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="p-6 bg-green-50 rounded-lg border border-green-100 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-robot text-green-600 text-xl mr-2"></i>
+                                <h3 class="font-medium text-green-900">การสร้าง Agent</h3>
+                            </div>
+                            <ol class="list-decimal list-inside text-green-800 space-y-3">
+                                <li class="flex items-start">
+                                    <span class="ml-2">คลิกปุ่ม "สร้าง Agent"</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">กรอกชื่อ Agent</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">เลือกประเภท Agent</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">กำหนด Prompt Template</span>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="p-6 bg-purple-50 rounded-lg border border-purple-100 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-vial text-purple-600 text-xl mr-2"></i>
+                                <h3 class="font-medium text-purple-900">การทดสอบ AI</h3>
+                            </div>
+                            <ol class="list-decimal list-inside text-purple-800 space-y-3">
+                                <li class="flex items-start">
+                                    <span class="ml-2">คลิกปุ่ม "ทดสอบ AI"</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">เลือก Agent ที่ต้องการทดสอบ</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">พิมพ์ข้อความที่ต้องการทดสอบ</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="ml-2">รอผลการตอบกลับ</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-exclamation-triangle text-red-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">ยืนยันการลบ</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">คุณแน่ใจหรือไม่ที่จะลบรายการนี้? การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="confirmDelete" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                        ลบ
+                    </button>
+                    <button type="button" id="cancelDelete" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                        ยกเลิก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันแสดงการแจ้งเตือน
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+            
+            notification.innerHTML = `
+                <div class="flex items-center p-4 mb-4 text-white ${bgColor} rounded-lg shadow-lg">
+                    <i class="fas fa-${icon} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // ตัวแปรสำหรับ Modal
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const cancelDelete = document.getElementById('cancelDelete');
+        let deleteTarget = null;
+        let deleteType = null;
+
+        // แสดง Modal ยืนยันการลบ
+        function showDeleteModal(id, type) {
+            deleteTarget = id;
+            deleteType = type;
+            deleteModal.classList.remove('hidden');
+        }
+
+        // ซ่อน Modal
+        function hideDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteTarget = null;
+            deleteType = null;
+        }
+
+        // คัดลอก URL
+        document.querySelectorAll('.copy-url').forEach(button => {
+            button.addEventListener('click', () => {
+                const url = button.dataset.url;
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('คัดลอก Webhook URL สำเร็จ', 'success');
+                }).catch(() => {
+                    showNotification('ไม่สามารถคัดลอก URL ได้', 'error');
+                });
+            });
+        });
+
+        // Toggle สถานะ Webhook
+        document.querySelectorAll('.toggle-status').forEach(button => {
+            button.addEventListener('click', async () => {
+                const id = button.dataset.id;
+                const currentStatus = button.dataset.status === 'true';
+                const newStatus = !currentStatus;
+
+                try {
+                    const response = await fetch(`/api/webhooks/toggle/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ is_active: newStatus })
+                    });
+
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        showNotification(error.error || 'เกิดข้อผิดพลาดในการเปลี่ยนสถานะ', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ', 'error');
+                }
+            });
+        });
+
+        // ลบ Webhook
+        document.querySelectorAll('.delete-webhook').forEach(button => {
+            button.addEventListener('click', () => showDeleteModal(button.dataset.id, 'webhook'));
+        });
+
+        // ลบ Agent
+        document.querySelectorAll('.delete-agent').forEach(button => {
+            button.addEventListener('click', () => showDeleteModal(button.dataset.id, 'agent'));
+        });
+
+        // ยืนยันการลบ
+        confirmDelete.addEventListener('click', async () => {
+            if (!deleteTarget || !deleteType) return;
+
+            try {
+                const endpoint = deleteType === 'webhook' ? 
+                    `/api/webhooks/delete/${deleteTarget}` : 
+                    `/agents/delete/${deleteTarget}`;
+
+                const response = await fetch(endpoint, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showNotification(`ลบ ${deleteType === 'webhook' ? 'Webhook' : 'Agent'} สำเร็จ`, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    const error = await response.json();
+                    showNotification(error.error || 'เกิดข้อผิดพลาดในการลบ', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('เกิดข้อผิดพลาดในการลบ', 'error');
+            }
+
+            hideDeleteModal();
+        });
+
+        // ยกเลิกการลบ
+        cancelDelete.addEventListener('click', hideDeleteModal);
+    </script>
+</body>
+</html>

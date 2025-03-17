@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้าง Webhook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- เพิ่ม Select2 สำหรับ multiple select -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen p-6 bg-gray-50 flex items-center justify-center">
+        <div class="container max-w-screen-lg mx-auto">
+            <div>
+                <div class="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
+                    <div class="grid gap-4 gap-y-2 text-sm grid-cols-1">
+                        <div class="text-gray-600 mb-4">
+                            <div class="font-bold text-2xl mb-2 text-gray-800">สร้าง Webhook ใหม่</div>
+                            <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสร้าง Webhook สำหรับรับข้อความจาก LINE OA</p>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <form id="createWebhookForm" class="grid gap-4">
+                                <div>
+                                    <label for="agency_name" class="text-sm font-medium text-gray-700 block mb-2">ชื่อหน่วยงาน</label>
+                                    <input type="text" name="agency_name" id="agency_name" 
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="ชื่อหน่วยงานของคุณ" required>
+                                </div>
+
+                                <div>
+                                    <label for="line_access_token" class="text-sm font-medium text-gray-700 block mb-2">
+                                        LINE Channel Access Token
+                                    </label>
+                                    <input type="text" name="line_access_token" id="line_access_token"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="ใส่ LINE Channel Access Token" required>
+                                </div>
+
+                                <div>
+                                    <label for="sub_agents" class="text-sm font-medium text-gray-700 block mb-2">เลือก AI Agent (เลือกได้หลายตัว)</label>
+                                    <select id="sub_agents" name="sub_agents" multiple class="w-full p-2 border rounded">
+                                    </select>                                                                        
+                                    <p class="mt-1 text-sm text-gray-500">AI Agent จะทำหน้าที่ตอบข้อความที่ส่งมาผ่าน webhook นี้</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2">วิธีการตั้งค่า Webhook URL ใน LINE OA</h3>
+                                        <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                                            <li>เข้าไปที่ LINE Official Account Manager</li>
+                                            <li>ไปที่เมนู Message API</li>
+                                            <li>คัดลอก Webhook URL ที่ได้หลังจากสร้าง webhook นี้</li>
+                                            <li>วาง URL ในช่อง Webhook URL</li>
+                                            <li>กดปุ่ม Verify เพื่อทดสอบการเชื่อมต่อ</li>
+                                            <li>เปิดใช้งาน Use webhook</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center space-x-4 mt-4">
+                                    <button type="submit" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-150 flex items-center">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        สร้าง Webhook
+                                    </button>
+                                    <a href="/" 
+                                        class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-150 flex items-center">
+                                        <i class="fas fa-arrow-left mr-2"></i>
+                                        กลับ
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center">
+                <div class="bg-white p-4 rounded-lg flex items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
+                    <p class="text-gray-700">กำลังสร้าง Webhook...</p>
+                </div>
+            </div>
+
+            <!-- Success Dialog -->
+            <div id="successDialog" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-check-circle text-green-500 text-5xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">สร้าง Webhook สำเร็จ!</h3>
+                    <p class="text-gray-600 mb-4">คัดลอก Webhook URL ด้านล่างไปใช้ในการตั้งค่า LINE OA ของคุณ</p>
+                    
+                    <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                        <div class="flex items-center">
+                            <input type="text" id="webhookUrl" readonly
+                                class="bg-transparent flex-1 border-0 focus:ring-0 text-gray-600 text-sm p-0">
+                            <button onclick="copyWebhookUrl()" 
+                                class="ml-2 text-blue-600 hover:text-blue-700">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button onclick="closeSuccessDialog()" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-150">
+                            ตกลง
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="alert" class="fixed top-4 right-4 max-w-sm hidden">
+                <div class="p-4 rounded-lg shadow-lg bg-red-100">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p id="alertMessage" class="text-sm font-medium text-red-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // เริ่มต้นใช้งาน Select2
+            $('#sub_agents').select2({
+                placeholder: "เลือก AI Agent",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            console.log("✅ DOM Loaded - Inline Script ทำงานแล้ว");
+            await loadAgentsList();
+            const form = document.getElementById("createWebhookForm");
+            if (form) {
+                form.addEventListener("submit", handleWebhookSubmit);
+            }
+        });
+    
+        async function loadAgentsList() {
+            console.log("🔹 กำลังโหลดรายการ AI Agents...");
+            try {
+                const response = await fetch('/api/agents');
+                if (!response.ok) throw new Error("ไม่สามารถโหลด AI Agents ได้");
+                
+                const agents = await response.json();
+                console.log("✅ Agents:", agents);
+    
+                const selectElement = document.getElementById("sub_agents");
+                if (!selectElement) {
+                    console.error("❌ ไม่พบ element sub_agents");
+                    return;
+                }
+    
+                selectElement.innerHTML = '';
+    
+                if (agents.length === 0) {
+                    console.warn("⚠️ ไม่มี AI Agents ในระบบ");
+                    return;
+                }
+    
+                agents.forEach(agent => {
+                    const option = document.createElement('option');
+                    option.value = agent.agent_name;
+                    option.textContent = agent.agent_name;
+                    selectElement.appendChild(option);
+                });
+    
+            } catch (error) {
+                console.error("❌ เกิดข้อผิดพลาดในการโหลด AI Agents:", error);
+                showAlert("❌ ไม่สามารถโหลดรายการ AI Agents ได้");
+            }
+        }
+    
+        async function handleWebhookSubmit(event) {
+            event.preventDefault();
+            console.log("🔹 Form Webhook Submitted");
+
+            const agency_name = document.getElementById("agency_name")?.value?.trim();
+            const sub_agents = $('#sub_agents').val(); 
+            const line_access_token = document.getElementById("line_access_token")?.value?.trim() || "";
+
+            console.log("📌 ตรวจสอบค่าที่ได้รับ:", { agency_name, sub_agents, line_access_token });
+
+            if (!agency_name || !sub_agents || sub_agents.length === 0 || !line_access_token) {
+                showAlert("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน");
+                return;
+            }
+
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            loadingOverlay.style.display = "flex";
+
+            try {
+                const response = await fetch('/api/webhooks/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agency_name,
+                        sub_agents,  
+                        line_access_token
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "เกิดข้อผิดพลาดในการสร้าง Webhook");
+                }
+
+                console.log("✅ Webhook Created:", data);
+                document.getElementById("webhookUrl").value = data.webhook_url;
+                document.getElementById("successDialog").style.display = "flex";
+
+            } catch (error) {
+                console.error("❌ เกิดข้อผิดพลาด:", error);
+                showAlert(error.message);
+            } finally {
+                loadingOverlay.style.display = "none";
+            }
+        }
+    
+        function showAlert(message) {
+            const alert = document.getElementById("alert");
+            const alertMessage = document.getElementById("alertMessage");
+            
+            alertMessage.textContent = message;
+            alert.style.display = "block";
+            
+            setTimeout(() => {
+                alert.style.display = "none";
+            }, 5000);
+        }
+    
+        function copyWebhookUrl() {
+            const webhookUrl = document.getElementById("webhookUrl");
+            webhookUrl.select();
+            document.execCommand("copy");
+            showAlert("คัดลอก Webhook URL แล้ว");
+        }
+    
+        function closeSuccessDialog() {
+            document.getElementById("successDialog").style.display = "none";
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

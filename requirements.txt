@@ -1,0 +1,10 @@
+flask==2.3.3
+flask-cors==4.0.0
+pymysql==1.1.0
+openai==0.28.1
+langchain==0.0.329
+requests==2.31.0
+pyngrok==7.0.0
+python-dotenv==1.0.0
+PyYAML==6.0.1
+Werkzeug==2.3.7

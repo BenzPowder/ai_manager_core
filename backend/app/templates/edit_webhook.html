@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไข Webhook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen p-6 bg-gray-50 flex items-center justify-center">
+        <div class="container max-w-screen-lg mx-auto">
+            <div>
+                <div class="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
+                    <div class="grid gap-4 gap-y-2 text-sm grid-cols-1">
+                        <div class="text-gray-600 mb-4">
+                            <div class="font-bold text-2xl mb-2 text-gray-800">แก้ไข Webhook</div>
+                            <p>แก้ไขข้อมูล Webhook สำหรับรับข้อความจาก LINE OA</p>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <form id="editWebhookForm" class="grid gap-4">
+                                <input type="hidden" id="webhook_id" value="{{ webhook.id }}">
+                                
+                                <div>
+                                    <label for="agency_name" class="text-sm font-medium text-gray-700 block mb-2">ชื่อหน่วยงาน</label>
+                                    <input type="text" name="agency_name" id="agency_name" value="{{ webhook.agency_name }}"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="ชื่อหน่วยงานของคุณ" required>
+                                </div>
+
+                                <div>
+                                    <label for="webhook_url" class="text-sm font-medium text-gray-700 block mb-2">Webhook URL</label>
+                                    <div class="flex">
+                                        <input type="text" id="webhook_url" value="{{ webhook.webhook_url }}" readonly
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <button type="button" onclick="copyUrl()" 
+                                            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-r-lg border border-l-0 border-gray-300 transition-colors duration-150">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="line_access_token" class="text-sm font-medium text-gray-700 block mb-2">
+                                        LINE Channel Access Token
+                                    </label>
+                                    <input type="text" name="line_access_token" id="line_access_token" value="{{ webhook.line_access_token }}"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="ใส่ LINE Channel Access Token" required>
+                                </div>
+
+                                <div>
+                                    <label for="sub_agents" class="text-sm font-medium text-gray-700 block mb-2">เลือก AI Agent (เลือกได้หลายตัว)</label>
+                                    <select id="sub_agents" name="sub_agents" multiple class="w-full p-2 border rounded">
+                                        {% for agent in agents %}
+                                        <option value="{{ agent.id }}" {% if agent.id in webhook.agent_ids %}selected{% endif %}>
+                                            {{ agent.agent_name }} ({{ agent.agent_type }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <p class="mt-1 text-sm text-gray-500">AI Agent จะทำหน้าที่ตอบข้อความที่ส่งมาผ่าน webhook นี้</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2">วิธีการตั้งค่า Webhook URL ใน LINE OA</h3>
+                                        <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                                            <li>เข้าไปที่ LINE Official Account Manager</li>
+                                            <li>ไปที่เมนู Message API</li>
+                                            <li>คัดลอก Webhook URL ที่ได้หลังจากสร้าง webhook นี้</li>
+                                            <li>วาง URL ในช่อง Webhook URL</li>
+                                            <li>กดปุ่ม Verify เพื่อทดสอบการเชื่อมต่อ</li>
+                                            <li>เปิดใช้งาน Use webhook</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center space-x-4 mt-4">
+                                    <button type="submit" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-150 flex items-center">
+                                        <i class="fas fa-save mr-2"></i>
+                                        บันทึก
+                                    </button>
+                                    <a href="/" 
+                                        class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-150 flex items-center">
+                                        <i class="fas fa-arrow-left mr-2"></i>
+                                        กลับ
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center">
+                <div class="bg-white p-4 rounded-lg flex items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
+                    <p class="text-gray-700">กำลังบันทึกข้อมูล...</p>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="alert" class="fixed top-4 right-4 max-w-sm hidden">
+                <div class="p-4 rounded-lg shadow-lg bg-red-100">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p id="alertMessage" class="text-sm font-medium text-red-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // เริ่มต้นใช้งาน Select2
+            $('#sub_agents').select2({
+                placeholder: "เลือก AI Agent",
+                allowClear: true,
+                width: '100%'
+            });
+
+            // จัดการการส่งฟอร์ม
+            $('#editWebhookForm').submit(function(e) {
+                e.preventDefault();
+                
+                const webhookId = $('#webhook_id').val();
+                const formData = {
+                    agency_name: $('#agency_name').val(),
+                    sub_agents: $('#sub_agents').val(),
+                    line_access_token: $('#line_access_token').val()
+                };
+
+                // แสดง loading overlay
+                $('#loadingOverlay').addClass('flex').removeClass('hidden');
+
+                $.ajax({
+                    url: `/api/webhooks/update/${webhookId}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        window.location.href = '/';
+                    },
+                    error: function(xhr) {
+                        const error = xhr.responseJSON;
+                        showAlert(error?.error || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                    },
+                    complete: function() {
+                        $('#loadingOverlay').addClass('hidden').removeClass('flex');
+                    }
+                });
+            });
+        });
+
+        // คัดลอก Webhook URL
+        function copyUrl() {
+            const url = document.getElementById('webhook_url').value;
+            navigator.clipboard.writeText(url).then(() => {
+                showAlert('คัดลอก URL สำเร็จ', 'success');
+            });
+        }
+
+        // แสดง alert
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('alert');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            // ปรับสีตามประเภท
+            if (type === 'success') {
+                alert.querySelector('div').classList.remove('bg-red-100');
+                alert.querySelector('div').classList.add('bg-green-100');
+                alert.querySelector('i').classList.remove('text-red-600');
+                alert.querySelector('i').classList.add('text-green-600');
+                alertMessage.classList.remove('text-red-600');
+                alertMessage.classList.add('text-green-600');
+            } else {
+                alert.querySelector('div').classList.remove('bg-green-100');
+                alert.querySelector('div').classList.add('bg-red-100');
+                alert.querySelector('i').classList.remove('text-green-600');
+                alert.querySelector('i').classList.add('text-red-600');
+                alertMessage.classList.remove('text-green-600');
+                alertMessage.classList.add('text-red-600');
+            }
+            
+            alertMessage.textContent = message;
+            alert.classList.remove('hidden');
+            alert.classList.add('flex');
+
+            setTimeout(() => {
+                alert.classList.add('hidden');
+                alert.classList.remove('flex');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
